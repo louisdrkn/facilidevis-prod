@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { authMiddleware } from '../../middleware';
+import { authMiddleware } from '@/lib/utils/auth-middleware';
 
 /**
  * Composant AuthGuard qui intercepte toutes les routes

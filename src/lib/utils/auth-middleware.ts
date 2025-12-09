@@ -1,12 +1,12 @@
 /**
- * Middleware d'authentification Supabase
- * Intercepte toutes les requêtes et vérifie l'état d'authentification
- * 
+ * Middleware d'authentification Supabase (côté client)
  * Pour une application React/Vite, ce middleware est utilisé via un composant
  * de route guard dans App.tsx
+ * 
+ * NOTE: Ce fichier est dans src/ pour éviter que Vercel le détecte comme middleware Edge
  */
 
-import { createClient } from './src/lib/utils/supabase/server';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Routes protégées nécessitant une authentification
@@ -43,7 +43,6 @@ export function isPublicRoute(pathname: string): boolean {
  */
 export async function authMiddleware(pathname: string): Promise<string | null> {
   try {
-    const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
 
     const isAuthenticated = !!session?.user;
@@ -63,7 +62,7 @@ export async function authMiddleware(pathname: string): Promise<string | null> {
     // Aucune redirection nécessaire
     return null;
   } catch (error) {
-    console.error('Erreur dans le middleware d\'authentification:', error);
+    console.error('Erreur dans le middleware d&apos;authentification:', error);
     // En cas d'erreur, rediriger vers login pour les routes protégées
     if (isProtectedRoute(pathname)) {
       return '/login';
