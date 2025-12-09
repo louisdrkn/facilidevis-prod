@@ -96,7 +96,7 @@ export default function Login() {
             className="text-muted-foreground font-bold mt-3 flex items-center gap-2"
           >
             <Sparkles className="h-4 w-4 text-primary" />
-            L'outil premium des pros du bâtiment
+            L&apos;outil premium des pros du bâtiment
             <Sparkles className="h-4 w-4 text-primary" />
           </motion.p>
         </div>

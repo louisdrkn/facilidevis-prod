@@ -78,7 +78,7 @@ export default function Scan() {
                         Analyse en cours...
                       </p>
                       <p className="text-primary-foreground/70 text-sm">
-                        L'IA extrait les informations
+                        L&apos;IA extrait les informations
                       </p>
                     </div>
                   </div>
@@ -142,7 +142,7 @@ export default function Scan() {
                   <Sparkles className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">Propulsé par l'IA</p>
+                  <p className="font-bold text-foreground">Propulsé par l&apos;IA</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Notre intelligence artificielle extrait automatiquement les informations de votre brouillon : client, prestations, montants...
                   </p>
