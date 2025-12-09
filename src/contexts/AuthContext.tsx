@@ -19,21 +19,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("🔐 [AUTH] Session Check - Initialisation");
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log("🔐 [AUTH] Auth state changed:", event, session?.user?.email || "no user");
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    // THEN check for existing session with timeout
+    const sessionPromise = supabase.auth.getSession();
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 5000));
+    
+    Promise.race([sessionPromise, timeoutPromise])
+      .then((result) => {
+        if (result && typeof result === 'object' && 'data' in result) {
+          const { data: { session } } = result as { data: { session: Session | null } };
+          console.log("🔐 [AUTH] Session loaded:", session?.user?.email || "no session");
+          setSession(session);
+          setUser(session?.user ?? null);
+        } else {
+          console.warn("⚠️ [AUTH] Session check timeout, continuing without session");
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("❌ [AUTH] Auth Error:", error);
+        setIsLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, []);

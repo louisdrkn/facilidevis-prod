@@ -42,27 +42,42 @@ export function isPublicRoute(pathname: string): boolean {
  * Retourne l'URL de redirection si nécessaire, sinon null
  */
 export async function authMiddleware(pathname: string): Promise<string | null> {
+  console.log("🔍 [AUTH_MIDDLEWARE] Checking path:", pathname);
+  
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    // Timeout de sécurité pour éviter un blocage
+    const sessionPromise = supabase.auth.getSession();
+    const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) => 
+      setTimeout(() => resolve({ data: { session: null } }), 2000)
+    );
+    
+    const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
+    
+    console.log("🔍 [AUTH_MIDDLEWARE] Session check result:", session?.user?.email || "no session");
 
     const isAuthenticated = !!session?.user;
     const isProtected = isProtectedRoute(pathname);
     const isPublic = isPublicRoute(pathname);
 
+    console.log("🔍 [AUTH_MIDDLEWARE] Auth state - authenticated:", isAuthenticated, "protected:", isProtected, "public:", isPublic);
+
     // Si l'utilisateur n'est pas connecté et essaie d'accéder à une route protégée
     if (!isAuthenticated && isProtected) {
+      console.log("🔍 [AUTH_MIDDLEWARE] Not authenticated, redirecting to login");
       return '/login';
     }
 
     // Si l'utilisateur est connecté et essaie d'accéder à /login
     if (isAuthenticated && pathname === '/login') {
+      console.log("🔍 [AUTH_MIDDLEWARE] Authenticated user on login page, redirecting to home");
       return '/';
     }
 
     // Aucune redirection nécessaire
+    console.log("🔍 [AUTH_MIDDLEWARE] No redirect needed");
     return null;
   } catch (error) {
-    console.error('Erreur dans le middleware d&apos;authentification:', error);
+    console.error('❌ [AUTH_MIDDLEWARE] Erreur dans le middleware d&apos;authentification:', error);
     // En cas d'erreur, rediriger vers login pour les routes protégées
     if (isProtectedRoute(pathname)) {
       return '/login';

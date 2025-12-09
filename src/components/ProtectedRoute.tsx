@@ -13,7 +13,10 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
 
+  console.log("🔒 [PROTECTED_ROUTE] Render check - isLoading:", isLoading, "user:", user?.email || "none");
+
   if (isLoading) {
+    console.log("🔒 [PROTECTED_ROUTE] Still loading, showing spinner");
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -27,8 +30,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   // Double vérification : si pas d&apos;utilisateur, rediriger vers login
   // (le middleware devrait déjà avoir géré cela, mais c&apos;est une sécurité supplémentaire)
   if (!user) {
+    console.log("🔒 [PROTECTED_ROUTE] No user, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
+  console.log("✅ [PROTECTED_ROUTE] User authenticated, rendering children");
   return <>{children}</>;
 }

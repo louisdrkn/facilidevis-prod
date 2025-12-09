@@ -12,21 +12,36 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    console.log("🛡️ [AUTH_GUARD] Checking auth for path:", location.pathname);
+    
     const checkAuth = async () => {
+      // Timeout de sécurité pour éviter un blocage infini
+      const timeoutId = setTimeout(() => {
+        console.warn("⚠️ [AUTH_GUARD] Timeout - Forcing check to complete");
+        setIsChecking(false);
+      }, 3000);
+
       try {
         const redirectTo = await authMiddleware(location.pathname);
+        clearTimeout(timeoutId);
+        
+        console.log("🛡️ [AUTH_GUARD] Middleware result:", redirectTo || "no redirect");
         
         if (redirectTo) {
+          console.log("🛡️ [AUTH_GUARD] Redirecting to:", redirectTo);
           navigate(redirectTo, { replace: true });
         }
       } catch (error) {
-        console.error('Erreur lors de la vérification de l&apos;authentification:', error);
+        clearTimeout(timeoutId);
+        console.error('❌ [AUTH_GUARD] Erreur lors de la vérification de l&apos;authentification:', error);
         // En cas d'erreur, rediriger vers login pour les routes protégées
         if (location.pathname !== '/login') {
+          console.log("🛡️ [AUTH_GUARD] Error - Redirecting to login");
           navigate('/login', { replace: true });
         }
       } finally {
         setIsChecking(false);
+        console.log("✅ [AUTH_GUARD] Check complete");
       }
     };
 
