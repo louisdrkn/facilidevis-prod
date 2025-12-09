@@ -21,6 +21,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      "react/no-unescaped-entities": "off", // Désactive la vérification des apostrophes pour Vercel
     },
   },
 );

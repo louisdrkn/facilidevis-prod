@@ -24,8 +24,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Double vérification : si pas d'utilisateur, rediriger vers login
-  // (le middleware devrait déjà avoir géré cela, mais c'est une sécurité supplémentaire)
+  // Double vérification : si pas d&apos;utilisateur, rediriger vers login
+  // (le middleware devrait déjà avoir géré cela, mais c&apos;est une sécurité supplémentaire)
   if (!user) {
     return <Navigate to="/login" replace />;
   }

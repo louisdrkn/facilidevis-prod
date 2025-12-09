@@ -48,7 +48,7 @@ export async function getSession() {
 }
 
 /**
- * Récupère l'utilisateur actuel depuis le serveur
+ * Récupère l&apos;utilisateur actuel depuis le serveur
  */
 export async function getUser() {
   const supabase = createClient();
